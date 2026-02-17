@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Time Registration </title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; 
+        }
+
+        /* Role Selection Styling */
+        .role-selection {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .role-options {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .role-options label {
+            font-weight: normal;
+            padding: 8px 15px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f8ff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        input[type="radio"] {
+            display: none; /* Hide the actual radio button */
+        }
+
+        input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Role Specific Fields */
+        .role-specific-fields {
+            border: 1px dashed #007bff;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+
+        .role-header {
+            text-align: center;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            color: white;
+            background-color: #dc3545; /* Error color default */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>One-Time Registration</h2>
+        <form id="registrationForm">
+
+            <div class="form-group role-selection">
+                <label>Register as:</label>
+                <div class="role-options">
+                    <input type="radio" id="roleDriver" name="role" value="driver" checked>
+                    <label for="roleDriver">Driver</label>
+
+                    <input type="radio" id="rolePassenger" name="role" value="passenger">
+                    <label for="rolePassenger">Passenger</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div id="driverFields" class="role-specific-fields">
+                <p class="role-header">Driver Information (License Required)</p>
+                <div class="form-group">
+                    <label for="license">Driving License Number</label>
+                    <input type="text" id="license" name="license">
+                </div>
+               <div class="form-group">
+                    <label for="carModel">Vehicle</label>
+                    <input type="text" id="carModel" name="carModel">
+                </div>
+                
+              </div>
+
+            <div id="passengerFields" class="role-specific-fields hidden">
+                <p class="role-header">Passenger Information (Aadhar Required)</p>
+                <div class="form-group">
+                    <label for="aadhar">Aadhar Number</label>
+                    <input type="text" id="aadhar" name="aadhar">
+                </div>
+            </div>
+
+            <button type="submit"> <a href="http://127.0.0.1:5500/new3.html#home">submit</a></button>
+
+          
+            <div id="message" class="message hidden"></div>
+           
+
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const roleRadios = document.querySelectorAll('input[name="role"]');
+            const driverFields = document.getElementById('driverFields');
+            const passengerFields = document.getElementById('passengerFields');
+            const form = document.getElementById('registrationForm');
+            const messageDiv = document.getElementById('message');
+            
+            // Get specific inputs we need to control the 'required' state for
+            const licenseInput = document.getElementById('license');
+            const aadharInput = document.getElementById('aadhar');
+            const carModelInput = document.getElementById('carModel');
+
+
+            // Function to toggle required attributes based on role
+            function toggleRequiredFields(role) {
+                const isDriver = role === 'driver';
+                
+                // Driver Requirements: License and Car Model are required
+                licenseInput.required = isDriver;
+                carModelInput.required = isDriver;
+
+                // Passenger Requirements: Aadhar is required
+                aadharInput.required = !isDriver; 
+            }
+
+            // Function to handle role change and visibility
+            function handleRoleChange() {
+                const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+                if (selectedRole === 'driver') {
+                    driverFields.classList.remove('hidden');
+                    passengerFields.classList.add('hidden');
+                } else {
+                    driverFields.classList.add('hidden');
+                    passengerFields.classList.remove('hidden');
+                }
+
+                // Update required attributes to enforce the new rules
+                toggleRequiredFields(selectedRole);
+            }
+
+            // Initial check on page load
+            handleRoleChange();
+
+            // Event listeners for role change
+            roleRadios.forEach(radio => {
+                radio.addEventListener('change', handleRoleChange);
+            });
+
+            // Form Submission Handler (Client-side validation and mock-up success)
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Stop default form submission
+
+                // --- Basic Client-Side Validation ---
+                if (!this.checkValidity()) {
+                    // checkValidity() will fail if any 'required' field is empty
+                    messageDiv.textContent = 'Please fill out all *required* fields based on your selected role.';
+                    messageDiv.style.backgroundColor = '#dc3545'; // Error color
+                    messageDiv.classList.remove('hidden');
+                    return;
+                }
+
+                // Get form data
+                const formData = new FormData(form);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+
+                // Log data to console (MOCK REGISTRATION)
+                console.log("--- REGISTRATION DATA SENT (MOCK) ---");
+                console.log("Role:", data.role);
+                console.log("Username:", data.username);
+                
+                if (data.role === 'driver') {
+                    console.log("License Number:", data.license);
+                    console.log("Car Model:", data.carModel);
+                    console.log("Aadhar Number:", 'N/A');
+                } else {
+                    console.log("License Number:", 'N/A');
+                    console.log("Car Model:", 'N/A');
+                    console.log("Aadhar Number:", data.aadhar);
+                }
+                console.log("-------------------------------------");
+
+
+                // Display Success Message
+                messageDiv.textContent = `Success! Registered as ${data.role}. (click again submit button for going to home page)`;
+                messageDiv.style.backgroundColor = '#28a745'; // Success color
+                messageDiv.classList.remove('hidden');
+                
+                // Reset form after a small delay
+                setTimeout(() => {
+                    form.reset();
+                    handleRoleChange(); // Reset role fields visibility and required attributes
+                    messageDiv.classList.add('hidden');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

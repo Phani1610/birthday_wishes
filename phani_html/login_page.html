@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TripShare - Registration</title>
+<style>
+    /* Original CSS retained */
+    body { font-family: Arial, sans-serif; background: #f4f7fa; margin:0; padding:0; }
+    .container { max-width: 450px; margin: 50px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #2c3e50; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input { width: 100%; padding: 10px; margin-top: 4px; border-radius: 6px; border: 1px solid #ccc; }
+    button { width: 100%; padding: 10px; margin-top: 16px; font-weight: bold; border:none; border-radius: 6px; cursor: pointer; }
+    #driverForm button { background: #27ae60; color:#fff; }
+    #driverForm button:hover { background: #219150; }
+    #passengerForm button { background: #007bff; color:#fff; }
+    #passengerForm button:hover { background: #0056b3; }
+    .role-selection { display: flex; justify-content: space-around; margin-bottom: 20px; }
+    .role-selection label { cursor: pointer; font-weight: normal; padding: 8px 12px; border: 1px solid #007bff; border-radius: 4px; background: #f0f8ff; transition: 0.3s; }
+    .role-selection input[type="radio"] { display: none; }
+    .role-selection input[type="radio"]:checked + label { background:#007bff; color:#fff; border-color:#007bff; }
+    .message { margin-top: 12px; padding: 10px; border-radius: 4px; text-align: center; color: #fff; display: none; }
+    .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>TripShare Registration</h2>
+
+    <div class="role-selection">
+        <input type="radio" id="roleDriver" name="role" value="driver" checked>
+        <label for="roleDriver">Driver</label>
+
+        <input type="radio" id="rolePassenger" name="role" value="passenger">
+        <label for="rolePassenger">Passenger</label>
+    </div>
+
+    <!-- Driver Form -->
+    <form id="driverForm">
+        <label for="driverName">Driver Name</label>
+        <input type="text" id="driverName" required>
+
+        <label for="license">Driving License Number</label>
+        <input type="text" id="license" required>
+
+        <label for="driverAadhar">Aadhar Number</label>
+        <input type="text" id="driverAadhar" required>
+
+        <button type="submit">Register as Driver</button>
+    </form>
+
+    <!-- Passenger Form -->
+    <form id="passengerForm" class="hidden">
+        <label for="passengerName">Passenger Name</label>
+        <input type="text" id="passengerName" required>
+
+        <label for="aadhar">Aadhar Number</label>
+        <input type="text" id="aadhar" required>
+
+        <button type="submit">Register as Passenger</button>
+    </form>
+
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const roleRadios = document.querySelectorAll('input[name="role"]');
+    const driverForm = document.getElementById('driverForm');
+    const passengerForm = document.getElementById('passengerForm');
+    const messageDiv = document.getElementById('message');
+
+    // Switch forms based on selected role
+    roleRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.value === 'driver') {
+                driverForm.classList.remove('hidden');
+                passengerForm.classList.add('hidden');
+            } else {
+                passengerForm.classList.remove('hidden');
+                driverForm.classList.add('hidden');
+            }
+        });
+    });
+
+    // Driver form submit
+    driverForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const driverName = document.getElementById('driverName').value.trim();
+        const license = document.getElementById('license').value.trim();
+        const aadhar = document.getElementById('driverAadhar').value.trim();
+
+        if (!driverName || !license || !aadhar) {
+            showMessage('Please fill all fields correctly for Driver.', 'red');
+            return;
+        }
+
+        console.log({ role: 'Driver', driverName, license, aadhar });
+        showMessage('✅ Driver registered successfully!', 'green');
+        driverForm.reset();
+    });
+
+    // Passenger form submit
+    passengerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const passengerName = document.getElementById('passengerName').value.trim();
+        const aadhar = document.getElementById('aadhar').value.trim();
+
+        if (!passengerName || !aadhar) {
+            showMessage('Please fill all fields correctly for Passenger.', 'red');
+            return;
+        }
+
+        console.log({ role: 'Passenger', passengerName, aadhar });
+        showMessage('✅ Passenger registered successfully!', 'green');
+        passengerForm.reset();
+    });
+
+    function showMessage(text, color) {
+        messageDiv.textContent = text;
+        messageDiv.style.backgroundColor = color;
+        messageDiv.style.display = 'block';
+        setTimeout(() => messageDiv.style.display = 'none', 2500);
+    }
+</script>
+</body>
+</html>
+

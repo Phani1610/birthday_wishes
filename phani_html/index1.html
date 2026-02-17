@@ -1,0 +1,864 @@
+ <!DOCTYPE html>
+ <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TripShare - Integrated App</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+    <style>
+        /* Base */
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #f4f7fa 0%, #eef3f9 50%, #ffffff 100%);
+        }
+        header { background: #2c3e50; color: #fff; padding: 50px; }
+        header h1 { margin: 0 0 10px; text-align: center; font-size: xxx-large; }
+        nav a { color: #fff; margin-right: 12px; text-decoration: none; font-weight: bold; }
+        nav a.active { text-decoration: underline; }
+        
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 { color: #2c3e50; }
+        label { display: block; margin: 8px 0 4px; }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button { background: #27ae60; color: #fff; font-weight: bold; cursor: pointer; }
+        button:hover { background: #219150; }
+        .trip, .request { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
+        .trip-summary { background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+        .footer-note { color: #666; font-size: 12px; text-align: center; margin: 16px 0 8px; }
+
+        /* Page fade transitions */
+        .page { display: none; opacity: 0; transform: translateY(6px); transition: opacity 160ms ease, transform 160ms ease; }
+        .page.active { display: block; opacity: 1; transform: translateY(0); }
+
+        /* Buttons for hero */
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .btn--primary {
+            background: #27ae60;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(39,174,96,0.25);
+        }
+        .btn--primary:hover { background: #219150; }
+        .btn--ghost {
+            background: transparent;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+        .btn--ghost:hover { background: #e9f7ef; }
+
+        /* Upgraded Home */
+        .home-hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            align-items: center;
+            gap: 24px;
+            max-width: 1100px;
+            margin: 28px auto 8px;
+            padding: 28px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        .home-hero__content h2 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            color: #2c3e50;
+        }
+        .home-hero__content p {
+            margin: 0 0 16px;
+            color: #455a64;
+        }
+        .home-cta {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0 16px;
+        }
+        .home-stats {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+            color: #526370;
+        }
+        .home-stats li { margin: 6px 0; }
+        .home-hero__art { position: relative; height: 200px; }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(2px);
+            animation: float 10s ease-in-out infinite;
+        }
+        .bubble--1 { width: 180px; height: 180px; background: #27ae60; top: 10px; right: 40px; animation-delay: 0s; }
+        .bubble--2 { width: 120px; height: 120px; background: #2c3e50; bottom: 0; right: 120px; animation-delay: 1.5s; }
+        .bubble--3 { width: 80px; height: 80px; background: #27ae60; top: 60px; right: -10px; animation-delay: 3s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+        .home-cards.container { max-width: 1100px; }
+        .home-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .home-card {
+            background: #fff;
+            border: 1px solid #e6ebf1;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .home-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.07);
+        }
+        .home-card__icon { font-size: 24px; }
+        .home-card h3 { margin: 6px 0 6px; color: #2c3e50; }
+        .home-card p { margin: 0 0 10px; color: #526370; }
+        .home-card__link { color: #27ae60; font-weight: 700; text-decoration: none; }
+        .home-card__link:hover { text-decoration: underline; }
+
+        /* Registration Form Styling (from the first file) */
+        .reg-container { max-width: 400px; }
+        .role-selection { border: 1px solid #ddd; padding: 10px; border-radius: 4px; margin-bottom: 20px; }
+        .role-options { display: flex; justify-content: space-around; margin-top: 10px; }
+        .role-options label {
+            font-weight: normal;
+            padding: 8px 15px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f8ff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        input[type="radio"] { display: none; /* Hide the actual radio button */ }
+        input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .role-specific-fields {
+            border: 1px dashed #007bff;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        .role-header {
+            text-align: center;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 0;
+        }
+        .hidden { display: none !important; }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            color: white;
+            background-color: #dc3545;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .home-hero { grid-template-columns: 1fr; padding: 20px; }
+            .home-hero__art { display: none; }
+            .home-cards { grid-template-columns: 1fr; }
+            .container { margin: 0; border-radius: 0; }
+        }
+      /* Gender radio styling */
+.role-options input[type="radio"] { display: none; }
+.role-options input[type="radio"]:checked + label {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+.role-options label {
+    font-weight: normal;
+    padding: 8px 15px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f0f8ff;
+    transition: background-color 0.3s, color 0.3s;
+}  
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚗 TripShare 🚴</h1>
+        <nav style="text-align: center; padding-top: 10px;">
+            <a href="#register" data-route>Register</a>
+            <a href="#home" data-route>Home</a>
+            <a href="#driver" data-route>Driver (Create Trip)</a>
+            <a href="#passenger" data-route>Passenger (Request Ride)</a>
+            <a href="#search" data-route>Search</a>
+            <a href="#payment" data-route>Payment</a>
+            <a href="#mapSection" data-route>Track Vehicle</a>
+        </nav>
+    </header>
+    <main>
+        <section id="register" class="page">
+            <div class="container reg-container">
+                <h2>One-Time Registration</h2>
+                <form id="registrationForm">
+
+                    <div class="form-group role-selection">
+                        <label>Register as:</label>
+                        <div class="role-options">
+                            <input type="radio" id="roleDriver" name="role" value="driver" checked>
+                            <label for="roleDriver">Driver</label>
+
+                            <input type="radio" id="rolePassenger" name="role" value="passenger">
+                            <label for="rolePassenger">Passenger</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div id="driverFields" class="role-specific-fields">
+                        <p class="role-header">Driver Information (License Required)</p>
+                        <div class="form-group">
+                            <label for="license">Driving License Number</label>
+                            <input type="text" id="license" name="license">
+                        </div>
+                       <div class="form-group">
+                            <label for="carModel">Vehicle</label>
+                            <input type="text" id="carModel" name="carModel">
+                        </div>
+                    </div>
+
+                    <div id="passengerFields" class="role-specific-fields hidden">
+                        <p class="role-header">Passenger Information (Aadhar Required)</p>
+                        <div class="form-group">
+                            <label for="aadhar">Aadhar Number</label>
+                            <input type="text" id="aadhar" name="aadhar">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitButton">Submit & Go to Home</button>
+
+                    <div id="message" class="message hidden"></div>
+                </form>
+            </div>
+        </section>
+        
+        <section id="home" class="page active">
+            <div class="home-hero">
+                <div class="home-hero__content">
+                    <h2>Share rides. Save money. Meet people.</h2>
+                    <p>Plan trips as a driver or find rides as a passenger. Simple, fast, and secure.</p>
+                    <div class="home-cta">
+                        <a href="#driver" data-route class="btn btn--primary">Create a Trip</a>
+                        <a href="#passenger" data-route class="btn btn--ghost">Request a Ride</a>
+                    </div>
+                    <ul class="home-stats">
+                        <li>🚗 Create trips in seconds</li>
+                        <li>🔎 Smart search for routes</li>
+                        <li>💳 Easy payment confirmation</li>
+                    </ul>
+                </div>
+                <div class="home-hero__art" aria-hidden="true">
+                    <div class="bubble bubble--1"></div>
+                    <div class="bubble bubble--2"></div>
+                    <div class="bubble bubble--3"></div>
+                </div>
+            </div>
+
+            <div class="home-cards container">
+                <div class="home-card">
+                    <div class="home-card__icon">🧭</div>
+                    <h3>Plan</h3>
+                    <p>Set origin, destination, time, seats, and cost per seat.</p>
+                    <a href="#driver" data-route class="home-card__link">Start as Driver →</a>
+                </div>
+                <div class="home-card">
+                    <div class="home-card__icon">🧑‍🤝‍🧑</div>
+                    <h3>Join</h3>
+                    <p>Search trips, check seats, and request to join instantly.</p>
+                    <a href="#search" data-route class="home-card__link">Find Trips →</a>
+                </div>
+                <div class="home-card">
+                    <div class="home-card__icon">💸</div>
+                    <h3>Confirm</h3>
+                    <p>Review trip summary and confirm payment details.</p>
+                    <a href="#payment" data-route class="home-card__link">Go to Payment →</a>
+                </div>
+            </div>
+
+            <p class="footer-note">Tip: Use the navigation or the buttons above to get started.</p>
+        </section>
+
+        <section id="driver" class="page">
+            <div class="container">
+                <h2>Create a Trip (Driver)</h2>
+                <form id="tripForm" novalidate>
+                    <label for="driverName">Driver Name</label>
+                    <input type="text" id="driverName" placeholder="Your full name" required />
+
+                    <div class="form-group">
+    <label>Driver Gender</label>
+    <div class="role-options">
+        <input type="radio" id="driverMale" name="driverGender" value="Male" checked>
+        <label for="driverMale">Male</label>
+
+        <input type="radio" id="driverFemale" name="driverGender" value="Female">
+        <label for="driverFemale">Female</label>
+
+        <input type="radio" id="driverOther" name="driverGender" value="Other">
+        <label for="driverOther">Other</label>
+    </div>
+</div>
+                     
+                    <label for="origin">Origin</label>
+                    <input type="text" id="origin" required />
+
+                    <label for="destination">Destination</label>
+                    <input type="text" id="destination" required />
+
+                    <label for="date">Date & Time</label>
+                    <input type="datetime-local" id="date" required />
+
+                    <label for="seats">Seats Available</label>
+                    <input type="number" id="seats" min="1" required />
+
+                    <label for="cost">Cost per Seat (₹)</label>
+                    <input type="number" id="cost" min="1" step="0.01" required />
+
+                    <label for="vehicleNumber">Vehicle Number</label>
+                    <input type="text" id="vehicleNumber" placeholder="e.g., AP39AB1234" required />
+
+                    <label for="vehicleType">Vehicle Type</label>
+                    <input type="text" id="vehicleType" placeholder="e.g., Car, Bike, Van" required />
+
+                    <label for="contactNumber">Contact Number/Phone Pay Number</label>
+                    <input type="tel" id="contactNumber" pattern="^\d{10}$" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required />
+
+                    <button type="submit">Create Trip</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="passenger" class="page">
+            <div class="container">
+                <h2>Request a Ride (Passenger)</h2>
+                <form id="requestForm" novalidate>
+                    <label for="passengerName">Passenger Name</label>
+                    <input type="text" id="passengerName" placeholder="Your full name" required />
+
+                    <div class="form-group">
+    <label>Passenger Gender</label>
+    <div class="role-options">
+        <input type="radio" id="passengerMale" name="passengerGender" value="Male" checked>
+        <label for="passengerMale">Male</label>
+
+        <input type="radio" id="passengerFemale" name="passengerGender" value="Female">
+        <label for="passengerFemale">Female</label>
+
+        <input type="radio" id="passengerOther" name="passengerGender" value="Other">
+        <label for="passengerOther">Other</label>
+    </div>
+</div>
+                     
+
+                    <label for="requestOrigin">Origin</label>
+                    <input type="text" id="requestOrigin" required />
+
+                    <label for="requestDestination">Destination</label>
+                    <input type="text" id="requestDestination" required />
+
+                    <label for="requestDate">Date & Time</label>
+                    <input type="datetime-local" id="requestDate" required />
+
+                    <label for="numPassengers">Number of Passengers</label>
+                    <input type="number" id="numPassengers" min="1" required />
+
+                    <label for="requestContact">Contact Number</label>
+                    <input type="tel" id="requestContact" pattern="^\d{10}$" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required />
+
+                    <button type="submit">Post Ride Request</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="search" class="page">
+            <div class="container">
+                <h2>Find a Ride</h2>
+                <input type="text" id="searchDest" placeholder="Enter destination..." />
+                <button id="btnSearchTrips">Search Trips</button>
+                <div id="results"></div>
+
+                <hr />
+
+                <h2>Find Passengers</h2>
+                <input type="text" id="searchPassengersDest" placeholder="Enter your trip destination..." />
+                <button id="btnSearchPassengers">Search for Passengers</button>
+                <div id="passengerResults"></div>
+            </div>
+        </section>
+
+        <section id="payment" class="page">
+            <div class="container">
+                <h2>Trip Summary</h2>
+                <div class="trip-summary" id="tripSummary"></div>
+
+                <h2>Payment Details</h2>
+                <form id="paymentForm" novalidate>
+                    <label for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" readonly required />
+
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">-- Select --</option>
+                        <option value="upi">UPI</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="cash">Cash</option>
+                    </select>
+
+                    <label for="txnId">Transaction ID (if applicable)</label>
+                    <input type="text" id="txnId" placeholder="Enter Transaction ID" />
+
+                    <button type="submit">Confirm Payment</button>
+                </form>
+                <p class="footer-note">Tip: You reach this page by choosing a trip on the Search page.</p>
+            </div>
+        </section>
+
+        <section id="mapSection" class="page">
+            <div class="container">
+                <h2>Track Vehicle by Number</h2>
+                <input type="text" id="trackVehicleNumber" placeholder="Enter Vehicle Number (e.g., AP39AB1234)">
+                <button id="btnTrack">Track Vehicle</button>
+                <div id="map" style="height:400px; margin-top:15px; border-radius:8px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; background-color: #f7f7f7; color: #555; text-align: center;">
+                    Tracking Map: Feature requires a live server and a valid Google Maps API Key.<br>A simulated message will appear below upon tracking.
+                </div>
+                <div id="trackingStatus" style="margin-top: 10px; font-weight: bold; color: #333;"></div>
+            </div>
+        </section>
+
+    </main>
+ <script>
+        // --- TRIPSHARE STATE/UTILITIES ---
+        const TRIPS_KEY = 'trips';
+        const REQS_KEY = 'passengerRequests';
+        const SELECTED_TRIP_KEY = 'selectedTripId';
+        const HOME_PAGE_URL = '#home'; // Use hash for internal navigation
+        
+        const loadTrips = () => { try { return JSON.parse(localStorage.getItem(TRIPS_KEY)) || []; } catch { return []; } };
+        const saveTrips = (t) => localStorage.setItem(TRIPS_KEY, JSON.stringify(t));
+        const loadReqs = () => { try { return JSON.parse(localStorage.getItem(REQS_KEY)) || []; } catch { return []; } };
+        const saveReqs = (r) => localStorage.setItem(REQS_KEY, JSON.stringify(r));
+        const setSelectedTripId = (id) => localStorage.setItem(SELECTED_TRIP_KEY, String(id));
+        const getSelectedTripId = () => {
+            const v = localStorage.getItem(SELECTED_TRIP_KEY);
+            return v ? Number(v) : null;
+        };
+        const clearSelectedTripId = () => localStorage.removeItem(SELECTED_TRIP_KEY);
+
+        function setMinDateTime(inputEl) {
+            if (!inputEl) return;
+            const now = new Date();
+            const localISO = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            inputEl.min = localISO;
+        }
+        function formatLocal(dtStr) {
+            const d = new Date(dtStr);
+            return isNaN(d) ? dtStr : d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+        }
+        function addKV(parent, label, value) {
+            const p = document.createElement('p');
+            const strong = document.createElement('strong');
+            strong.textContent = label + ': ';
+            p.appendChild(strong);
+            p.appendChild(document.createTextNode(value));
+            parent.appendChild(p);
+        }
+        function setActiveNav(hash) {
+            document.querySelectorAll('nav a[data-route]').forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === hash);
+            });
+        }
+
+        // --- ROUTING ---
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const page = document.getElementById(id) || document.getElementById('home');
+            // force reflow so CSS transition triggers
+            void page.offsetWidth;
+            page.classList.add('active');
+            setActiveNav('#' + id);
+        }
+        function onRouteChange() {
+            const hash = (location.hash || '#home').replace('#', '');
+            showPage(hash);
+            // Lazy init per page
+            if (hash === 'register') initRegistrationPage();
+            if (hash === 'driver') initDriverPage();
+            if (hash === 'passenger') initPassengerPage();
+            if (hash === 'search') initSearchPage();
+            if (hash === 'payment') initPaymentPage();
+            if (hash === 'mapSection') initMapSectionPage();
+        }
+
+
+        // --- REGISTRATION PAGE LOGIC (FROM FIRST FILE) ---
+        let registrationInit = false;
+        function initRegistrationPage() {
+            if (registrationInit) return;
+            registrationInit = true;
+
+            const roleRadios = document.querySelectorAll('input[name="role"]');
+            const driverFields = document.getElementById('driverFields');
+            const passengerFields = document.getElementById('passengerFields');
+            const form = document.getElementById('registrationForm');
+            const messageDiv = document.getElementById('message');
+            
+            const licenseInput = document.getElementById('license');
+            const aadharInput = document.getElementById('aadhar');
+            const carModelInput = document.getElementById('carModel');
+
+
+            function toggleRequiredFields(role) {
+                const isDriver = role === 'driver';
+                
+                // Driver Requirements
+                licenseInput.required = isDriver;
+                carModelInput.required = isDriver;
+                // Passenger Requirements
+                aadharInput.required = !isDriver; 
+            }
+
+            function handleRoleChange() {
+                const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+                if (selectedRole === 'driver') {
+                    driverFields.classList.remove('hidden');
+                    passengerFields.classList.add('hidden');
+                } else {
+                    driverFields.classList.add('hidden');
+                    passengerFields.classList.remove('hidden');
+                }
+                toggleRequiredFields(selectedRole);
+            }
+
+            // Set initial state based on checked radio (Driver by default)
+            handleRoleChange();
+
+            // Event listeners for role change
+            roleRadios.forEach(radio => {
+                radio.addEventListener('change', handleRoleChange);
+            });
+
+          form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                 // handles registration
+
+                if (!this.checkValidity()) {
+                    messageDiv.textContent = 'Please fill out all *required* fields based on your selected role.';
+                    messageDiv.style.backgroundColor = '#dc3545';
+                    messageDiv.classList.remove('hidden');
+                    return;
+                }
+
+                const formData = new FormData(form);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+
+                console.log("--- REGISTRATION DATA SENT (MOCK) ---", data);
+
+                // Display Success Message
+                messageDiv.textContent = `Success! Registered as ${data.role}. Redirecting to Home...`;
+                messageDiv.style.backgroundColor = '#28a745';
+                messageDiv.classList.remove('hidden');
+
+                // Reset form fields immediately
+                form.reset();
+                handleRoleChange(); // Reset role fields visibility and required attributes
+
+                // Redirect to the home page after a short delay
+                setTimeout(() => {
+                    location.hash = HOME_PAGE_URL;
+                    messageDiv.classList.add('hidden');
+                }, 1000);
+            });
+        }
+        
+        // --- TRIPSHARE PAGE LOGIC (FROM SECOND FILE) ---
+        let driverInit = false;
+        function initDriverPage() {
+            if (driverInit) return;
+            driverInit = true;
+            setMinDateTime(document.getElementById('date'));
+            const tripform = document.getElementById('tripForm');
+            tripform.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const driverName = document.getElementById('driverName').value.trim();
+                const driverGender = getSelectedGender('driverGender');
+                const origin = document.getElementById('origin').value.trim();
+                const destination = document.getElementById('destination').value.trim();
+                const date = document.getElementById('date').value;
+                const seats = Number.parseInt(document.getElementById('seats').value, 10);
+                const cost = Number.parseFloat(document.getElementById('cost').value);
+                const vehicleNumber = document.getElementById('vehicleNumber').value.trim().toUpperCase();
+                const vehicleType = document.getElementById('vehicleType').value.trim();
+                const contactNumber = document.getElementById('contactNumber').value.trim();
+
+                if (!driverName) return alert('Please enter the driver name.');
+                if (!/^\d{10}$/.test(contactNumber)) return alert('Enter a valid 10-digit contact number.');
+                if (!Number.isFinite(seats) || seats < 1) return alert('Seats must be at least 1.');
+                if (!Number.isFinite(cost) || cost < 1) return alert('Cost must be at least ₹1.');
+                const chosen = new Date(date).getTime();
+                const now = Date.now() - 30000;
+                if (!date || isNaN(chosen) || chosen < now) return alert('Choose a future date and time.');
+
+                const trips = loadTrips();
+                const newTrip = { id: Date.now(), driverName, driverGender, origin, destination, date, seats, cost, vehicleNumber, vehicleType, contactNumber };
+                trips.push(newTrip);
+                saveTrips(trips);
+                alert('✅ Trip Created Successfully! Your Trip ID is: ' + newTrip.id);
+                tripform.reset();
+            });
+        }
+
+        let passengerInit = false;
+        function initPassengerPage() {
+            if (passengerInit) return;
+            passengerInit = true;
+            setMinDateTime(document.getElementById('requestDate'));
+            const form = document.getElementById('requestForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const reqs = loadReqs();
+
+                const passengerName = document.getElementById('passengerName').value.trim();
+                const passengerGender = getSelectedGender('passengerGender');
+
+                const origin = document.getElementById('requestOrigin').value.trim();
+                const destination = document.getElementById('requestDestination').value.trim();
+                const date = document.getElementById('requestDate').value;
+                const numPassengers = Number.parseInt(document.getElementById('numPassengers').value, 10);
+                const contact = document.getElementById('requestContact').value.trim();
+
+                if (!passengerName) return alert('Please enter the passenger name.');
+                if (!/^\d{10}$/.test(contact)) return alert('Enter a valid 10-digit contact number.');
+                if (!Number.isFinite(numPassengers) || numPassengers < 1) return alert('Passengers must be at least 1.');
+                const chosen = new Date(date).getTime();
+                const now = Date.now() - 30000;
+                if (!date || isNaN(chosen) || chosen < now) return alert('Choose a future date and time.');
+
+                const newReq = { id: Date.now(), passengerName, passengerGender, origin, destination, date, numPassengers, contact };
+                reqs.push(newReq);
+                saveReqs(reqs);
+                alert('✅ Ride Request Posted Successfully!');
+                form.reset();
+            });
+        }
+
+        let searchInit = false;
+        function initSearchPage() {
+            if (searchInit) return;
+            searchInit = true;
+
+            const btnTrips = document.getElementById('btnSearchTrips');
+            const btnPassengers = document.getElementById('btnSearchPassengers');
+            const inrFmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+
+            btnTrips.addEventListener('click', () => {
+                const trips = loadTrips();
+                const dest = document.getElementById('searchDest').value.trim().toLowerCase();
+                const results = document.getElementById('results');
+                results.innerHTML = '';
+
+                let filtered = trips
+                    .filter(t => !dest || t.destination.toLowerCase().includes(dest))
+                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                if (filtered.length === 0) { results.textContent = 'No trips found.'; return; }
+
+                filtered.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'trip';
+                    addKV(div, 'Driver', t.driverName || '—');
+                    addKV(div, 'Driver Gender', t.driverGender || '—');
+                    addKV(div, 'From', t.origin);
+                    addKV(div, 'To', t.destination);
+                    addKV(div, 'Date', formatLocal(t.date));
+                    addKV(div, 'Seats Available', String(t.seats));
+                    addKV(div, 'Cost per Seat', inrFmt.format(t.cost));
+                    addKV(div, 'Vehicle', `${t.vehicleType} (${t.vehicleNumber})`);
+                    addKV(div, 'Contact', t.contactNumber);
+
+                    const btn = document.createElement('button');
+                    btn.textContent = 'Request to Join';
+                    btn.addEventListener('click', () => {
+                        const all = loadTrips();
+                        const idx = all.findIndex(x => x.id === t.id);
+                        if (idx === -1) { alert('Trip not found.'); return; }
+                        if (Number(all[idx].seats) > 0) {
+                            all[idx].seats = Number(all[idx].seats) - 1;
+                            saveTrips(all);
+                            setSelectedTripId(t.id);
+                            location.hash = '#payment';
+                        } else {
+                            alert('❌ No seats available.');
+                        }
+                    });
+                    div.appendChild(btn);
+                    results.appendChild(div);
+                });
+            });
+
+            btnPassengers.addEventListener('click', () => {
+                const reqs = loadReqs();
+                const dest = document.getElementById('searchPassengersDest').value.trim().toLowerCase();
+                const results = document.getElementById('passengerResults');
+                results.innerHTML = '';
+
+                let filtered = reqs
+                    .filter(r => !dest || r.destination.toLowerCase().includes(dest))
+                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                if (filtered.length === 0) { results.textContent = 'No passengers found for this route.'; return; }
+
+                filtered.forEach(r => {
+                    const div = document.createElement('div');
+                    div.className = 'request';
+                    addKV(div, 'Passenger', r.passengerName || '—');
+                    addKV(div, 'Passenger Gender', r.passengerGender || '—');
+                    addKV(div, 'Looking for ride to', r.destination);
+                    addKV(div, 'Starting from', r.origin);
+                    addKV(div, 'Date', formatLocal(r.date));
+                    addKV(div, 'Passengers', String(r.numPassengers));
+                    addKV(div, 'Contact', r.contact);
+                    const btn = document.createElement('button');
+                    btn.textContent = 'Contact Driver/Passenger';
+                    btn.addEventListener('click', () => alert('Contact: ' + r.contact));
+                    div.appendChild(btn);
+                    results.appendChild(div);
+                });
+            });
+        }
+
+        let paymentInit = false;
+        function initPaymentPage() {
+            const summary = document.getElementById('tripSummary');
+            const amountEl = document.getElementById('amount');
+            const selId = getSelectedTripId();
+            const trips = loadTrips();
+
+            if (!selId) {
+                summary.textContent = 'No trip selected. Go to Search and choose a trip.';
+                amountEl.value = '';
+            } else {
+                const trip = trips.find(t => t.id === selId);
+                if (!trip) {
+                    summary.textContent = 'Trip not found. It may have been removed.';
+                    amountEl.value = '';
+                } else {
+                    summary.innerHTML = '';
+                    addKV(summary, 'Driver', trip.driverName || '—');
+                    addKV(summary, 'Driver Gender', trip.driverGender || '—');
+                    addKV(summary, 'From', trip.origin);
+                    addKV(summary, 'To', trip.destination);
+                    addKV(summary, 'Date', formatLocal(trip.date));
+                    addKV(summary, 'Seats Booked', '1');
+                    addKV(summary, 'Cost per Seat', `₹${trip.cost}`);
+                    addKV(summary, 'Vehicle', `${trip.vehicleType} (${trip.vehicleNumber})`);
+                    addKV(summary, 'Contact', trip.contactNumber);
+                    amountEl.value = trip.cost;
+                }
+            }
+
+            if (!paymentInit) {
+                paymentInit = true;
+                document.getElementById('paymentForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const amount = Number.parseFloat(document.getElementById('amount').value);
+                    const method = document.getElementById('paymentMethod').value;
+                    const txnIdInput = document.getElementById('txnId');
+                    const txnId = txnIdInput.value.trim();
+
+                    if (!method) return alert('Please select a payment method.');
+                    if ((method === 'upi' || method === 'card') && txnId.length === 0) {
+                        alert('Please enter the Transaction ID for this payment method.');
+                        txnIdInput.focus();
+                        return;
+                    }
+                    alert(`✅ Payment Successful!\nAmount: ₹${amount}\nMethod: ${method}\nTransaction ID: ${txnId || 'N/A'}`);
+                    clearSelectedTripId();
+                    e.target.reset();
+                    location.hash = '#home';
+                });
+            }
+        }
+        
+        let mapSectionInit = false;
+        function initMapSectionPage() {
+            if (mapSectionInit) return;
+            mapSectionInit = true;
+            
+            document.getElementById("btnTrack").addEventListener("click", () => {
+                const vnum = document.getElementById("trackVehicleNumber").value.trim().toUpperCase();
+                const statusEl = document.getElementById("trackingStatus");
+
+                if (!vnum) {
+                    statusEl.textContent = "Please enter a vehicle number.";
+                    statusEl.style.color = 'red';
+                    return;
+                }
+
+                // Simulated tracking logic
+                const randomLat = (17.3 + (Math.random() * 0.2)).toFixed(5);
+                const randomLng = (78.4 + (Math.random() * 0.2)).toFixed(5);
+                
+                statusEl.textContent = `✅ Tracking Simulated: Vehicle ${vnum} is currently at (Lat: ${randomLat}, Lng: ${randomLng}).`;
+                statusEl.style.color = '#27ae60';
+                
+                alert(`Tracking Simulated: Vehicle ${vnum} found!`);
+            });
+        }
+
+        // Init
+        window.addEventListener('hashchange', onRouteChange);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Default route
+            if (!location.hash) location.hash = '#home';
+            onRouteChange();
+        });
+// --- Function to get selected gender from radio buttons ---
+function getSelectedGender(radioName) {
+    const selected = document.querySelector(`input[name="${radioName}"]:checked`);
+    return selected ? selected.value : 'other'; // default 'other' if none selected
+}
+    </script>
+   
+    </body>
+</html>

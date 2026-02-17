@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>TripShare - Single File</title>
+	<style>
+		body { font-family: Arial, sans-serif; background: #f4f7fa; margin: 0; padding: 0; }
+		header { background: #2c3e50; color: #fff; padding: 15px; }
+		header h1 { margin: 0 0 6px; }
+		nav a { color: #fff; margin-right: 12px; text-decoration: none; font-weight: bold; }
+		nav a.active { text-decoration: underline; }
+		.container { max-width: 900px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+		h2 { color: #2c3e50; }
+		label { display: block; margin: 8px 0 4px; }
+		input, select, button { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; }
+		button { background: #27ae60; color: #fff; font-weight: bold; cursor: pointer; }
+		button:hover { background: #219150; }
+		.page { display: none; }
+		.page.active { display: block; }
+		.trip, .request { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 6px; background: #f9f9f9; }
+		.trip-summary { background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+		.footer-note { color: #666; font-size: 12px; text-align: center; margin: 16px 0 8px; }
+		@media (max-width: 600px) { .container { margin: 0; border-radius: 0; } }
+	</style>
+</head>
+<body>
+	<header>
+		<h1>🚗 TripShare 🚴</h1>
+		<nav>
+			<a href="#home" data-route>Home</a>
+			<a href="#driver" data-route>Create a Trip</a>
+			<a href="#passenger" data-route>Request a Ride</a>
+			<a href="#search" data-route>Search</a>
+			<a href="#payment" data-route>Payment</a>
+		</nav>
+	</header>
+
+	<main>
+		<section id="home" class="page active">
+			<div class="container">
+				<h2>Welcome</h2>
+				<p>Use the navigation to create a trip, request a ride, search, or complete payment.</p>
+			</div>
+		</section>
+
+		<section id="driver" class="page">
+			<div class="container">
+				<h2>Create a Trip (Driver)</h2>
+				<form id="tripForm" novalidate>
+					<label for="driverName">Driver Name</label>
+					<input type="text" id="driverName" placeholder="Your full name" required />
+
+					<label for="origin">Origin</label>
+					<input type="text" id="origin" required />
+
+					<label for="destination">Destination</label>
+					<input type="text" id="destination" required />
+
+					<label for="date">Date & Time</label>
+					<input type="datetime-local" id="date" required />
+
+					<label for="seats">Seats Available</label>
+					<input type="number" id="seats" min="1" required />
+
+					<label for="cost">Cost per Seat (₹)</label>
+					<input type="number" id="cost" min="1" step="0.01" required />
+
+					<label for="vehicleNumber">Vehicle Number</label>
+					<input type="text" id="vehicleNumber" placeholder="e.g., AP39AB1234" required />
+
+					<label for="vehicleType">Vehicle Type</label>
+					<input type="text" id="vehicleType" placeholder="e.g., Car, Bike, Van" required />
+
+					<label for="contactNumber">Contact Number</label>
+					<input type="tel" id="contactNumber" pattern="\d{10}" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required />
+
+					<button type="submit">Create Trip</button>
+				</form>
+			</div>
+		</section>
+
+		<section id="passenger" class="page">
+			<div class="container">
+				<h2>Request a Ride (Passenger)</h2>
+				<form id="requestForm" novalidate>
+					<label for="passengerName">Passenger Name</label>
+					<input type="text" id="passengerName" placeholder="Your full name" required />
+
+					<label for="requestOrigin">Origin</label>
+					<input type="text" id="requestOrigin" required />
+
+					<label for="requestDestination">Destination</label>
+					<input type="text" id="requestDestination" required />
+
+					<label for="requestDate">Date & Time</label>
+					<input type="datetime-local" id="requestDate" required />
+
+					<label for="numPassengers">Number of Passengers</label>
+					<input type="number" id="numPassengers" min="1" required />
+
+					<label for="requestContact">Contact Number</label>
+					<input type="tel" id="requestContact" pattern="\d{10}" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required />
+
+					<button type="submit">Post Ride Request</button>
+				</form>
+			</div>
+		</section>
+
+		<section id="search" class="page">
+			<div class="container">
+				<h2>Find a Ride</h2>
+				<input type="text" id="searchDest" placeholder="Enter destination..." />
+				<button id="btnSearchTrips">Search Trips</button>
+				<div id="results"></div>
+
+				<hr />
+
+				<h2>Find Passengers</h2>
+				<input type="text" id="searchPassengersDest" placeholder="Enter your trip destination..." />
+				<button id="btnSearchPassengers">Search for Passengers</button>
+				<div id="passengerResults"></div>
+			</div>
+		</section>
+
+		<section id="payment" class="page">
+			<div class="container">
+				<h2>Trip Summary</h2>
+				<div class="trip-summary" id="tripSummary"></div>
+
+				<h2>Payment Details</h2>
+				<form id="paymentForm" novalidate>
+					<label for="amount">Amount (₹)</label>
+					<input type="number" id="amount" readonly required />
+
+					<label for="paymentMethod">Payment Method</label>
+					<select id="paymentMethod" required>
+						<option value="">-- Select --</option>
+						<option value="upi">UPI</option>
+						<option value="card">Credit/Debit Card</option>
+						<option value="cash">Cash</option>
+					</select>
+
+					<label for="txnId">Transaction ID (if applicable)</label>
+					<input type="text" id="txnId" placeholder="Enter Transaction ID" />
+
+					<button type="submit">Confirm Payment</button>
+				</form>
+				<p class="footer-note">Tip: You reach this page by choosing a trip on the Search page.</p>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		// Storage keys
+		const TRIPS_KEY = 'trips';
+		const REQS_KEY = 'passengerRequests';
+		const SELECTED_TRIP_KEY = 'selectedTripId';
+
+		// State I/O
+		const loadTrips = () => { try { return JSON.parse(localStorage.getItem(TRIPS_KEY)) || []; } catch { return []; } };
+		const saveTrips = (t) => localStorage.setItem(TRIPS_KEY, JSON.stringify(t));
+		const loadReqs = () => { try { return JSON.parse(localStorage.getItem(REQS_KEY)) || []; } catch { return []; } };
+		const saveReqs = (r) => localStorage.setItem(REQS_KEY, JSON.stringify(r));
+		const setSelectedTripId = (id) => localStorage.setItem(SELECTED_TRIP_KEY, String(id));
+		const getSelectedTripId = () => { const v = localStorage.getItem(SELECTED_TRIP_KEY); return v ? Number(v) : null; };
+		const clearSelectedTripId = () => localStorage.removeItem(SELECTED_TRIP_KEY);
+
+		// Utilities
+		function setMinDateTime(inputEl) {
+			if (!inputEl) return;
+			const now = new Date();
+			const localISO = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+			inputEl.min = localISO;
+		}
+		function formatLocal(dtStr) {
+			const d = new Date(dtStr);
+			return isNaN(d) ? dtStr : d.toLocaleString();
+		}
+		function addKV(parent, label, value) {
+			const p = document.createElement('p');
+			const strong = document.createElement('strong');
+			strong.textContent = label + ': ';
+			p.appendChild(strong);
+			p.appendChild(document.createTextNode(value));
+			parent.appendChild(p);
+		}
+		function setActiveNav(hash) {
+			document.querySelectorAll('nav a[data-route]').forEach(a => {
+				a.classList.toggle('active', a.getAttribute('href') === hash);
+			});
+		}
+
+		// Router
+		function showPage(id) {
+			document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+			const page = document.getElementById(id) || document.getElementById('home');
+			page.classList.add('active');
+			setActiveNav('#' + id);
+		}
+		function onRouteChange() {
+			const hash = (location.hash || '#home').replace('#', '');
+			showPage(hash);
+			// Lazy init per page
+			if (hash === 'driver') initDriverPage();
+			if (hash === 'passenger') initPassengerPage();
+			if (hash === 'search') initSearchPage();
+			if (hash === 'payment') initPaymentPage();
+		}
+
+		// Page initializers
+		let driverInit = false;
+		function initDriverPage() {
+			if (driverInit) return;
+			driverInit = true;
+
+			setMinDateTime(document.getElementById('date'));
+			const form = document.getElementById('tripForm');
+			form.addEventListener('submit', (e) => {
+				e.preventDefault();
+				const trips = loadTrips();
+
+				const driverName = document.getElementById('driverName').value.trim();
+				const origin = document.getElementById('origin').value.trim();
+				const destination = document.getElementById('destination').value.trim();
+				const date = document.getElementById('date').value;
+				const seats = parseInt(document.getElementById('seats').value, 10);
+				const cost = parseFloat(document.getElementById('cost').value);
+				const vehicleNumber = document.getElementById('vehicleNumber').value.trim().toUpperCase();
+				const vehicleType = document.getElementById('vehicleType').value.trim();
+				const contactNumber = document.getElementById('contactNumber').value.trim();
+
+				if (!driverName) return alert('Please enter the driver name.');
+				if (!/\d{10}/.test(contactNumber)) return alert('Enter a valid 10-digit contact number.');
+				if (isNaN(seats) || seats < 1) return alert('Seats must be at least 1.');
+				if (isNaN(cost) || cost < 1) return alert('Cost must be at least ₹1.');
+				if (!date || new Date(date) < new Date()) return alert('Choose a future date and time.');
+
+				const newTrip = { id: Date.now(), driverName, origin, destination, date, seats, cost, vehicleNumber, vehicleType, contactNumber };
+				trips.push(newTrip);
+				saveTrips(trips);
+				alert('✅ Trip Created Successfully!');
+				form.reset();
+			});
+		}
+
+		let passengerInit = false;
+		function initPassengerPage() {
+			if (passengerInit) return;
+			passengerInit = true;
+
+			setMinDateTime(document.getElementById('requestDate'));
+			const form = document.getElementById('requestForm');
+			form.addEventListener('submit', (e) => {
+				e.preventDefault();
+				const reqs = loadReqs();
+
+				const passengerName = document.getElementById('passengerName').value.trim();
+				const origin = document.getElementById('requestOrigin').value.trim();
+				const destination = document.getElementById('requestDestination').value.trim();
+				const date = document.getElementById('requestDate').value;
+				const numPassengers = parseInt(document.getElementById('numPassengers').value, 10);
+				const contact = document.getElementById('requestContact').value.trim();
+
+				if (!passengerName) return alert('Please enter the passenger name.');
+				if (!/\d{10}/.test(contact)) return alert('Enter a valid 10-digit contact number.');
+				if (isNaN(numPassengers) || numPassengers < 1) return alert('Passengers must be at least 1.');
+				if (!date || new Date(date) < new Date()) return alert('Choose a future date and time.');
+
+				const newReq = { id: Date.now(), passengerName, origin, destination, date, numPassengers, contact };
+				reqs.push(newReq);
+				saveReqs(reqs);
+				alert('✅ Ride Request Posted Successfully!');
+				form.reset();
+			});
+		}
+
+		let searchInit = false;
+		function initSearchPage() {
+			if (searchInit) return;
+			searchInit = true;
+
+			const btnTrips = document.getElementById('btnSearchTrips');
+			const btnPassengers = document.getElementById('btnSearchPassengers');
+
+			btnTrips.addEventListener('click', () => {
+				const trips = loadTrips();
+				const dest = document.getElementById('searchDest').value.trim().toLowerCase();
+				const results = document.getElementById('results');
+				results.innerHTML = '';
+
+				const filtered = trips
+					.filter(t => t.destination.toLowerCase().includes(dest))
+					.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+				if (filtered.length === 0) { results.textContent = 'No trips found.'; return; }
+
+				filtered.forEach(t => {
+					const div = document.createElement('div');
+					div.className = 'trip';
+					addKV(div, 'Driver', t.driverName || '—');
+					addKV(div, 'From', t.origin);
+					addKV(div, 'To', t.destination);
+					addKV(div, 'Date', formatLocal(t.date));
+					addKV(div, 'Seats Available', String(t.seats));
+					addKV(div, 'Cost per Seat', `₹${t.cost}`);
+					addKV(div, 'Vehicle', `${t.vehicleType} (${t.vehicleNumber})`);
+					addKV(div, 'Contact', t.contactNumber);
+
+					const btn = document.createElement('button');
+					btn.textContent = 'Request to Join';
+					btn.addEventListener('click', () => {
+						// Decrement and go to payment
+						if (t.seats > 0) {
+							const all = loadTrips();
+							const idx = all.findIndex(x => x.id === t.id);
+							if (idx !== -1) {
+								all[idx].seats = Number(all[idx].seats) - 1;
+								saveTrips(all);
+								setSelectedTripId(t.id);
+								location.hash = '#payment';
+							} else {
+								alert('Trip not found.');
+							}
+						} else {
+							alert('❌ No seats available.');
+						}
+					});
+					div.appendChild(btn);
+					results.appendChild(div);
+				});
+			});
+
+			btnPassengers.addEventListener('click', () => {
+				const reqs = loadReqs();
+				const dest = document.getElementById('searchPassengersDest').value.trim().toLowerCase();
+				const results = document.getElementById('passengerResults');
+				results.innerHTML = '';
+
+				const filtered = reqs
+					.filter(r => r.destination.toLowerCase().includes(dest))
+					.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+				if (filtered.length === 0) { results.textContent = 'No passengers found for this route.'; return; }
+
+				filtered.forEach(r => {
+					const div = document.createElement('div');
+					div.className = 'request';
+					addKV(div, 'Passenger', r.passengerName || '—');
+					addKV(div, 'Looking for ride to', r.destination);
+					addKV(div, 'Starting from', r.origin);
+					addKV(div, 'Date', formatLocal(r.date));
+					addKV(div, 'Passengers', String(r.numPassengers));
+					addKV(div, 'Contact', r.contact);
+					const btn = document.createElement('button');
+					btn.textContent = 'Contact Passenger';
+					btn.addEventListener('click', () => alert('Contact: ' + r.contact));
+					div.appendChild(btn);
+					results.appendChild(div);
+				});
+			});
+		}
+
+		let paymentInit = false;
+		function initPaymentPage() {
+			// reinit every time so summary refreshes if user comes back
+			const summary = document.getElementById('tripSummary');
+			const amountEl = document.getElementById('amount');
+			const selId = getSelectedTripId();
+			const trips = loadTrips();
+
+			if (!selId) {
+				summary.textContent = 'No trip selected. Go to Search and choose a trip.';
+				amountEl.value = '';
+			} else {
+				const trip = trips.find(t => t.id === selId);
+				if (!trip) {
+					summary.textContent = 'Trip not found. It may have been removed.';
+					amountEl.value = '';
+				} else {
+					summary.innerHTML = '';
+					addKV(summary, 'Driver', trip.driverName || '—');
+					addKV(summary, 'From', trip.origin);
+					addKV(summary, 'To', trip.destination);
+					addKV(summary, 'Date', formatLocal(trip.date));
+					addKV(summary, 'Seats Booked', '1');
+					addKV(summary, 'Cost per Seat', `₹${trip.cost}`);
+					addKV(summary, 'Vehicle', `${trip.vehicleType} (${trip.vehicleNumber})`);
+					addKV(summary, 'Contact', trip.contactNumber);
+					amountEl.value = trip.cost;
+				}
+			}
+
+			if (!paymentInit) {
+				paymentInit = true;
+				document.getElementById('paymentForm').addEventListener('submit', (e) => {
+					e.preventDefault();
+					const amount = parseFloat(document.getElementById('amount').value);
+					const method = document.getElementById('paymentMethod').value;
+					const txnIdInput = document.getElementById('txnId');
+					const txnId = txnIdInput.value.trim();
+
+					if (!method) return alert('Please select a payment method.');
+					if ((method === 'upi' || method === 'card') && txnId.length === 0) {
+						alert('Please enter the Transaction ID for this payment method.');
+						txnIdInput.focus();
+						return;
+					}
+
+					alert(`✅ Payment Successful!\nAmount: ₹${amount}\nMethod: ${method}\nTransaction ID: ${txnId || 'N/A'}`);
+					clearSelectedTripId();
+					e.target.reset();
+					location.hash = '#home';
+				});
+			}
+		}
+
+		// Init
+		window.addEventListener('hashchange', onRouteChange);
+		document.addEventListener('DOMContentLoaded', () => {
+			// Default route
+			if (!location.hash) location.hash = '#home';
+			onRouteChange();
+		});
+	</script>
+</body>
+</html>

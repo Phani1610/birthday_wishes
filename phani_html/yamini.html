@@ -1,0 +1,352 @@
+Here is your FULLY UPDATED Smart Communication Assistant PRO
+Now includes:
+
+✅ Grammar Checker (LanguageTool API)
+✅ Speech Recognition
+✅ Text-to-Speech
+✅ Grammar Quiz
+✅ 🔥 Continuous Type Master Mode
+✅ 12,000+ Auto-Generated Sentences
+✅ Paragraph Practice Mode
+✅ Auto Next Content Until Timer Ends
+✅ WPM + Accuracy Calculation
+
+You can copy-paste this into a new .html file and run it.
+
+🚀 FULL FINAL UPDATED CODE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Communication Assistant PRO</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin:0;
+    padding:0;
+    background: linear-gradient(to right,#1e1e2f,#2c2c3e);
+    color:white;
+    text-align:center;
+}
+
+.container{
+    background:#1f1f2f;
+    width:900px;
+    margin:30px auto;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+button{
+    padding:10px;
+    margin:5px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.primary{background:#4CAF50;color:white;}
+.secondary{background:#2196F3;color:white;}
+.danger{background:#e91e63;color:white;}
+.option{
+    background:#607d8b;color:white;width:60%;display:block;margin:5px auto;
+}
+
+.correctChar{ color:#00ff00; }
+.wrongChar{ color:#ff4c4c; }
+.currentChar{ text-decoration: underline; }
+
+.progress{
+    width:100%;
+    background:#333;
+    border-radius:10px;
+}
+.progress-bar{
+    height:15px;
+    background:#4CAF50;
+    width:0%;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🗣 Smart Communication Assistant PRO</h2>
+
+<textarea id="inputText" placeholder="Type here..." 
+style="width:100%;height:70px;"></textarea><br>
+
+<button class="secondary" onclick="startVoice()">🎤 Speak</button>
+<button class="primary" onclick="checkGrammar()">✔ Check Grammar</button>
+<button class="danger" onclick="speakText()">🔊 Speak Text</button>
+
+<div id="output"></div>
+
+<hr>
+
+<h3>🎮 Grammar Quiz Game</h3>
+<button class="primary" onclick="startQuiz()">Start Quiz</button>
+
+<div id="quizBox" style="display:none;">
+    <h3 id="timer" style="color:red;"></h3>
+    <h4 id="question"></h4>
+    <div id="options"></div>
+    <div id="feedback"></div>
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p id="score"></p>
+</div>
+
+<hr>
+
+<h3>⌨ Type Master Game (Sentence + Paragraph Mode)</h3>
+
+<div style="background:#2a2a3d;padding:15px;border-radius:10px;">
+    <p id="typeSentence" style="font-size:18px;white-space:pre-wrap;"></p>
+
+    <textarea id="typeInput"
+    placeholder="Start typing here..."
+    style="width:100%;height:100px;font-size:16px;"></textarea>
+
+    <br>
+    <button class="primary" onclick="startTypeMaster()">Start Game</button>
+
+    <h4 id="typeTimer"></h4>
+    <h4 id="typeStats"></h4>
+</div>
+
+</div>
+
+<script>
+
+/* ---------------- SPEECH ---------------- */
+let correctedSentence="";
+
+function startVoice(){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition){ alert("Use Chrome"); return;}
+    let recognition=new SpeechRecognition();
+    recognition.lang="en-US";
+    recognition.start();
+    recognition.onresult=function(e){
+        document.getElementById("inputText").value=e.results[0][0].transcript;
+    }
+}
+
+/* ---------------- GRAMMAR CHECK ---------------- */
+async function checkGrammar(){
+    let text=document.getElementById("inputText").value.trim();
+    if(!text){alert("Enter text");return;}
+    const response=await fetch("https://api.languagetool.org/v2/check",{
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded"},
+        body:`text=${encodeURIComponent(text)}&language=en-US`
+    });
+    const data=await response.json();
+    let corrected=text;
+    data.matches.forEach(m=>{
+        if(m.replacements.length>0){
+            corrected=corrected.replace(
+                corrected.substr(m.offset,m.length),
+                m.replacements[0].value
+            );
+        }
+    });
+    correctedSentence=corrected;
+    document.getElementById("output").innerHTML="<b>Corrected:</b> "+corrected;
+}
+
+/* ---------------- TEXT TO SPEECH ---------------- */
+function speakText(){
+    if(!correctedSentence){alert("Check grammar first");return;}
+    let speech=new SpeechSynthesisUtterance(correctedSentence);
+    speech.lang="en-US";
+    speechSynthesis.speak(speech);
+}
+
+/* ---------------- QUIZ ---------------- */
+let questions=[];
+let current=0;
+let score=0;
+let timerInterval;
+let timeLeft=60;
+
+function startQuiz(){
+    questions=[
+        {q:"She ___ a teacher.",o:["is","are","am"],a:0},
+        {q:"They ___ happy.",o:["is","are","am"],a:1},
+        {q:"He ___ playing.",o:["is","are","am"],a:0},
+        {q:"I ___ from India.",o:["am","is","are"],a:0},
+        {q:"We ___ friends.",o:["is","are","am"],a:1}
+    ];
+    current=0; score=0; timeLeft=60;
+    document.getElementById("quizBox").style.display="block";
+    startTimer();
+    showQuestion();
+}
+
+function startTimer(){
+    timerInterval=setInterval(()=>{
+        timeLeft--;
+        document.getElementById("timer").innerText="Time Left: "+timeLeft+" sec";
+        if(timeLeft<=0){ clearInterval(timerInterval); endQuiz(); }
+    },1000);
+}
+
+function showQuestion(){
+    if(current>=questions.length){ endQuiz(); return;}
+    let q=questions[current];
+    document.getElementById("question").innerText=q.q;
+    let html="";
+    q.o.forEach((opt,i)=>{
+        html+=`<button class="option" onclick="checkAnswer(${i})">${opt}</button>`;
+    });
+    document.getElementById("options").innerHTML=html;
+    document.getElementById("score").innerText="Score: "+score;
+    document.getElementById("progressBar").style.width=((current/questions.length)*100)+"%";
+}
+
+function checkAnswer(i){
+    if(i===questions[current].a){ score++; }
+    current++;
+    setTimeout(showQuestion,400);
+}
+
+function endQuiz(){
+    clearInterval(timerInterval);
+    document.getElementById("question").innerText="Quiz Finished! Score: "+score;
+    document.getElementById("options").innerHTML="";
+}
+
+/* ---------------- TYPE MASTER ---------------- */
+
+let masterSentence="";
+let masterTime=60;
+let masterTimerInterval;
+let masterStartTime;
+let totalTypedWords=0;
+let totalCorrectChars=0;
+let totalTypedChars=0;
+
+/* -------- Sentence Generator (12,000+) -------- */
+
+const subjects=["Communication skills","Artificial intelligence","Technology","Success","Hard work","Consistency","Practice","Knowledge","Education","Discipline","Leadership","Confidence","Creativity","Teamwork","Innovation"];
+const verbs=["improves","builds","creates","develops","enhances","strengthens","supports","increases","encourages","inspires"];
+const objects=["your career growth","strong relationships","personal development","future opportunities","professional success","technical skills","problem solving ability","critical thinking","confidence levels","overall performance"];
+const endings=["every single day.","in the modern world.","with consistent effort.","through regular practice.","when applied correctly.","for long term success.","in every situation.","during challenging times."];
+
+let sentences=[];
+for(let i of subjects)
+for(let j of verbs)
+for(let k of objects)
+for(let l of endings)
+sentences.push(i+" "+j+" "+k+" "+l);
+
+/* -------- Paragraph Collection -------- */
+
+const paragraphs=[
+`Communication skills are essential for success in every field.
+They help individuals express ideas clearly and confidently.
+Strong communication builds trust and improves teamwork.`,
+
+`Artificial intelligence is transforming industries across the world.
+Machine learning analyzes vast amounts of data.
+The future depends on intelligent automation.`,
+
+`Success requires discipline and consistent effort.
+Daily improvement leads to long term achievements.
+Small habits create big results over time.`,
+
+`Typing speed and accuracy improve productivity.
+Regular practice builds muscle memory.
+Confidence increases with consistent training.`,
+
+`Education empowers individuals with knowledge.
+Critical thinking develops through learning.
+Continuous education ensures growth and adaptability.`
+];
+
+function startTypeMaster(){
+    masterTime=60;
+    totalTypedWords=0;
+    totalCorrectChars=0;
+    totalTypedChars=0;
+    document.getElementById("typeStats").innerText="";
+    loadNewText();
+    startMasterTimer();
+    masterStartTime=new Date().getTime();
+    document.getElementById("typeInput").addEventListener("input",checkTyping);
+}
+
+function loadNewText(){
+    let useParagraph=Math.random()>0.5;
+    masterSentence= useParagraph ?
+        paragraphs[Math.floor(Math.random()*paragraphs.length)] :
+        sentences[Math.floor(Math.random()*sentences.length)];
+    document.getElementById("typeInput").value="";
+    displaySentence();
+}
+
+function displaySentence(){
+    let html="";
+    masterSentence.split("").forEach(char=>{
+        html+=`<span>${char}</span>`;
+    });
+    document.getElementById("typeSentence").innerHTML=html;
+}
+
+function checkTyping(){
+    let typed=document.getElementById("typeInput").value;
+    let chars=document.querySelectorAll("#typeSentence span");
+
+    chars.forEach((span,i)=>{
+        span.classList.remove("correctChar","wrongChar","currentChar");
+        if(typed[i]==null) return;
+        if(typed[i]===span.innerText){
+            span.classList.add("correctChar");
+        } else {
+            span.classList.add("wrongChar");
+        }
+    });
+
+    if(typed.length < chars.length){
+        chars[typed.length].classList.add("currentChar");
+    }
+
+    if(typed===masterSentence){
+        totalTypedWords += masterSentence.split(" ").length;
+        totalTypedChars += typed.length;
+        for(let i=0;i<typed.length;i++)
+            if(typed[i]===masterSentence[i]) totalCorrectChars++;
+        loadNewText();
+    }
+}
+
+function startMasterTimer(){
+    clearInterval(masterTimerInterval);
+    masterTimerInterval=setInterval(()=>{
+        masterTime--;
+        document.getElementById("typeTimer").innerText="Time Left: "+masterTime+" sec";
+        if(masterTime<=0) finishTypeMaster();
+    },1000);
+}
+
+function finishTypeMaster(){
+    clearInterval(masterTimerInterval);
+    let totalTime=(new Date().getTime()-masterStartTime)/1000;
+    let wpm=Math.round((totalTypedWords/totalTime)*60);
+    let accuracy=Math.round((totalCorrectChars/totalTypedChars)*100);
+    document.getElementById("typeStats").innerHTML=
+        "🏁 Time Over!<br>⚡ Speed: "+(isNaN(wpm)?0:wpm)+" WPM<br>🎯 Accuracy: "+(isNaN(accuracy)?0:accuracy)+"%";
+    document.getElementById("typeInput").removeEventListener("input",checkTyping);
+}
+
+</script>
+</body>
+</html>
