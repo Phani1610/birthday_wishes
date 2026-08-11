@@ -1,0 +1,1392 @@
+/* ===========================
+   Google Font
+=========================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#b11089,#3b6ad7);
+    color:#fff;
+    overflow-x:hidden;
+}
+
+/* ===========================
+   Floating Hearts
+=========================== */
+
+/* ===========================
+   Floating Hearts
+=========================== */
+
+.hearts{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:0;
+
+}
+
+.heart{
+
+    position:absolute;
+
+    bottom:-60px;
+
+    animation:floatHeart linear forwards;
+
+    filter:drop-shadow(0 0 10px rgba(255,255,255,.8));
+
+}
+
+@keyframes floatHeart{
+
+0%{
+
+transform:translateY(0) rotate(0deg);
+
+opacity:1;
+
+}
+
+50%{
+
+opacity:.9;
+
+}
+
+100%{
+
+transform:translateY(-120vh) rotate(360deg);
+
+opacity:0;
+
+}
+
+}
+/* ===========================
+ Hero
+=========================== */
+
+.hero{
+
+height:100vh;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+padding:20px;
+
+}
+
+.hero h3{
+
+font-size:35px;
+
+margin-bottom:15px;
+
+}
+
+.hero h1{
+
+font-size:65px;
+
+color:white;
+
+text-shadow:0 0 20px #ff4b91;
+
+}
+
+.hero p{
+
+margin-top:25px;
+
+font-size:24px;
+
+min-height:40px;
+
+}
+
+.hero button{
+
+margin-top:35px;
+
+padding:16px 45px;
+
+border:none;
+
+border-radius:50px;
+
+background:#ff2d75;
+
+color:white;
+
+font-size:20px;
+
+cursor:pointer;
+
+transition:.4s;
+
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+
+}
+
+.hero button:hover{
+
+transform:scale(1.08);
+
+background:#ff0f63;
+
+}
+
+/* ===========================
+ Sections
+=========================== */
+
+section{
+
+padding:80px 12%;
+
+}
+
+/* ===========================
+ Message Card
+=========================== */
+
+.card{
+
+background:rgba(255,255,255,.15);
+
+backdrop-filter:blur(12px);
+
+padding:40px;
+
+border-radius:25px;
+
+box-shadow:0 15px 40px rgba(0,0,0,.2);
+
+text-align:center;
+
+}
+
+.card h2{
+
+margin-bottom:25px;
+
+font-size:35px;
+
+}
+
+.card p{
+
+font-size:20px;
+
+line-height:2;
+
+}
+
+/* ===========================
+ Gallery
+=========================== */
+
+.gallery{
+
+text-align:center;
+
+}
+
+.gallery h2{
+
+font-size:40px;
+
+margin-bottom:40px;
+
+}
+
+.photos{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+
+gap:25px;
+
+}
+
+.photos img{
+
+width:100%;
+
+height:420px;
+
+object-fit:cover;
+
+border-radius:20px;
+
+cursor:pointer;
+
+transition:.4s;
+
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+
+}
+
+.photos img:hover{
+
+transform:scale(1.05);
+
+}
+
+/* ===========================
+ Cake
+=========================== */
+
+.cake{
+
+text-align:center;
+
+}
+
+.cake h2{
+
+font-size:40px;
+
+margin-bottom:30px;
+
+}
+
+#cake{
+
+width:380px;
+
+transition:1s;
+
+}
+
+.cake button{
+
+margin:15px;
+
+padding:15px 35px;
+
+border:none;
+
+border-radius:40px;
+
+background:#ff2d75;
+
+color:white;
+
+cursor:pointer;
+
+font-size:18px;
+
+transition:.3s;
+
+}
+
+.cake button:hover{
+
+transform:scale(1.05);
+
+}
+
+#cakeMessage{
+
+margin-top:30px;
+
+font-size:28px;
+
+color:#fff8b3;
+
+}
+
+/* ===========================
+ Love Letter
+=========================== */
+
+.letter{
+
+text-align:center;
+
+}
+
+.envelope button{
+
+padding:18px 45px;
+
+background:#ff2d75;
+
+color:white;
+
+border:none;
+
+border-radius:50px;
+
+font-size:20px;
+
+cursor:pointer;
+
+}
+
+#letterText{
+
+display:none;
+
+margin-top:35px;
+
+background:white;
+
+color:#444;
+
+padding:35px;
+
+border-radius:20px;
+
+box-shadow:0 15px 35px rgba(0,0,0,.3);
+
+line-height:2;
+
+font-size:19px;
+
+animation:fadeIn 1s;
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(30px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+/* ===========================
+   FINAL SURPRISE SECTION
+=========================== */
+
+.final{
+    text-align:center;
+    padding:100px 10%;
+}
+
+.final h2{
+    font-size:45px;
+    margin-bottom:40px;
+    color:#fff;
+}
+
+.qualities{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+    margin:50px 0;
+}
+
+.qualities div{
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:30px;
+    font-size:22px;
+    font-weight:600;
+    transition:0.4s;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.qualities div:hover{
+    transform:translateY(-10px) scale(1.05);
+    background:rgba(255,255,255,.25);
+}
+
+.final button{
+
+    padding:18px 45px;
+
+    border:none;
+
+    border-radius:50px;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    background:#ff2d75;
+
+    color:white;
+
+    transition:.4s;
+
+}
+
+.final button:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:0 0 25px #ff2d75;
+
+}
+
+/* ===========================
+   POPUP
+=========================== */
+
+.popup{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,.75);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+.popup-content{
+
+    width:82%;
+
+    max-width:520px;
+
+    background:white;
+
+    color:#444;
+
+    border-radius:25px;
+
+    padding:32px;
+
+    text-align:center;
+
+    animation:popupAnimation .6s;
+
+}
+
+.popup-content h1{
+
+    color:#ff2d75;
+
+    font-size:38px;
+
+}
+
+.popup-content h2{
+
+    margin:20px 0;
+
+    font-size:26px;
+
+}
+
+.popup-content p{
+
+    line-height:2;
+
+    font-size:17px;
+
+}
+
+.popup-content button{
+
+    margin-top:30px;
+
+    padding:12px 30px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:#ff2d75;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+}
+
+@keyframes popupAnimation{
+
+from{
+
+opacity:0;
+
+transform:scale(.6);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+/* ===========================
+   IMAGE POPUP EFFECT
+=========================== */
+
+.photos img{
+
+    cursor:pointer;
+
+}
+
+.photos img:active{
+
+    transform:scale(.95);
+
+}
+
+/* ===========================
+   BUTTON GLOW
+=========================== */
+
+button{
+
+    transition:.4s;
+
+}
+
+button:hover{
+
+    box-shadow:0 0 25px rgba(255,255,255,.6);
+
+}
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#b5098f;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#ff2d75;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#ff0a5b;
+
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+
+footer{
+
+    padding:40px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    color:white;
+
+    background:rgba(255,255,255,.12);
+
+}
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.08);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+.hero h1{
+
+animation:pulse 2s infinite;
+
+}
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(60px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.card,
+.gallery,
+.cake,
+.letter,
+.final{
+
+animation:fadeUp 1.2s;
+
+}
+/* ===================================
+   RESPONSIVE DESIGN
+=================================== */
+
+@media (max-width:992px){
+
+.hero h1{
+font-size:50px;
+}
+
+.hero h3{
+font-size:30px;
+}
+
+.hero p{
+font-size:20px;
+}
+
+.card{
+padding:30px;
+}
+
+.card h2{
+font-size:30px;
+}
+
+.gallery h2,
+.cake h2,
+.final h2{
+font-size:35px;
+}
+
+#cake{
+width:280px;
+}
+
+.popup-content{
+width:95%;
+padding:30px;
+}
+
+}
+
+@media (max-width:768px){
+
+.hero{
+padding:30px;
+}
+
+.hero h1{
+font-size:40px;
+line-height:1.3;
+}
+
+.hero h3{
+font-size:26px;
+}
+
+.hero p{
+font-size:18px;
+}
+
+.hero button{
+font-size:18px;
+padding:14px 35px;
+}
+
+section{
+padding:70px 20px;
+}
+
+.card{
+padding:25px;
+}
+
+.card p{
+font-size:17px;
+}
+
+.photos{
+grid-template-columns:1fr;
+}
+
+.photos img{
+height:340px;
+}
+
+#cake{
+width:280px;
+}
+
+.cake button{
+
+display:block;
+
+width:100%;
+
+margin:15px auto;
+
+}
+
+.qualities{
+
+grid-template-columns:1fr;
+
+}
+
+.popup-content h1{
+
+font-size:35px;
+
+}
+
+.popup-content h2{
+
+font-size:25px;
+
+}
+
+.popup-content p{
+
+font-size:17px;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.hero h1{
+
+font-size:32px;
+
+}
+
+.hero h3{
+
+font-size:22px;
+
+}
+
+.hero p{
+
+font-size:16px;
+
+}
+
+.card h2{
+
+font-size:24px;
+
+}
+
+.gallery h2,
+
+.cake h2,
+
+.final h2{
+
+font-size:28px;
+
+}
+
+}
+
+/* ===================================
+   IMAGE HOVER EFFECT
+=================================== */
+
+.photos img:hover{
+
+transform:scale(1.08) rotate(2deg);
+
+box-shadow:0 20px 40px rgba(0,0,0,.35);
+
+}
+
+/* ===================================
+   CARD HOVER
+=================================== */
+
+.card:hover{
+
+transform:translateY(-10px);
+
+transition:.5s;
+
+}
+
+/* ===================================
+   LETTER ANIMATION
+=================================== */
+
+#letterText{
+
+transition:.6s;
+
+}
+
+/* ===================================
+   HEART GLOW
+=================================== */
+
+.hero h1{
+
+text-shadow:
+
+0 0 10px white,
+
+0 0 20px #ff4b91,
+
+0 0 40px #ff2d75,
+
+0 0 60px #ff2d75;
+
+}
+
+/* ===================================
+   BUTTON EFFECT
+=================================== */
+
+button{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+button::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:-100%;
+
+width:100%;
+
+height:100%;
+
+background:rgba(255,255,255,.25);
+
+transform:skewX(-30deg);
+
+transition:.6s;
+
+}
+
+button:hover::before{
+
+left:120%;
+
+}
+
+/* ===================================
+   SMOOTH FADE
+=================================== */
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+/* ===================================
+   SELECTION COLOR
+=================================== */
+
+::selection{
+
+background:#ff2d75;
+
+color:white;
+
+}
+
+/* ===================================
+   END
+=================================== */
+/* ===============================
+WELCOME PAGE
+===============================*/
+
+.welcome-page{
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:linear-gradient(135deg,#d12486,#0f0e0e,#1e10c1);
+
+overflow:hidden;
+
+}
+
+.welcome-container{
+
+text-align:center;
+
+color:white;
+
+padding:40px;
+
+}
+
+.welcome-container h1{
+
+font-size:55px;
+
+margin:20px 0;
+
+text-shadow:0 0 15px white;
+
+}
+
+.welcome-container p{
+
+font-size:22px;
+
+line-height:1.8;
+
+margin-bottom:35px;
+
+}
+
+.heart{
+
+font-size:90px;
+
+animation:heartbeat 1.2s infinite;
+
+}
+
+@keyframes heartbeat{
+
+0%{
+
+transform:scale(1);
+
+}
+
+25%{
+
+transform:scale(1.2);
+
+}
+
+50%{
+
+transform:scale(1);
+
+}
+
+75%{
+
+transform:scale(1.2);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+.love-btn{
+
+padding:18px 45px;
+
+font-size:22px;
+
+border:none;
+
+border-radius:50px;
+
+background:white;
+
+color:#ff2d75;
+
+cursor:pointer;
+
+transition:.4s;
+
+box-shadow:0 10px 30px rgba(0,0,0,.3);
+
+}
+
+.love-btn:hover{
+
+transform:scale(1.08);
+
+background:#ff2d75;
+
+color:white;
+
+}
+/* ===========================
+WELCOME PAGE
+=========================== */
+
+.welcome-page{
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:linear-gradient(135deg,#ff6b9d,#ff9ac6,#ffd6e8);
+
+overflow:hidden;
+
+position:relative;
+
+}
+
+.welcome-container{
+
+text-align:center;
+
+z-index:2;
+
+padding:20px;
+
+}
+
+.heart-big{
+
+font-size:100px;
+
+animation:heartbeat 1.3s infinite;
+
+}
+
+@keyframes heartbeat{
+
+0%,100%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.2);
+
+}
+
+}
+
+.welcome-container h1{
+
+font-size:55px;
+
+color:white;
+
+text-shadow:0 0 15px #ff2d75;
+
+margin:15px 0;
+
+}
+
+.welcome-container p{
+
+font-size:22px;
+
+color:white;
+
+line-height:1.8;
+
+margin:25px 0;
+
+}
+
+.cake-icon{
+
+font-size:90px;
+
+margin:20px;
+
+animation:bounce 2s infinite;
+
+}
+
+@keyframes bounce{
+
+0%,100%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-15px);
+
+}
+
+}
+
+/* Button */
+
+.love-btn{
+
+padding:18px 45px;
+
+font-size:22px;
+
+border:none;
+
+border-radius:50px;
+
+background:white;
+
+color:#ff2d75;
+
+cursor:pointer;
+
+font-weight:bold;
+
+transition:.4s;
+
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+
+}
+
+.love-btn:hover{
+
+transform:scale(1.08);
+
+background:#ff2d75;
+
+color:white;
+
+}
+
+/* Balloons */
+
+.balloons{
+
+position:absolute;
+
+width:100%;
+
+height:100%;
+
+pointer-events:none;
+
+}
+
+.balloon{
+
+position:absolute;
+
+font-size:60px;
+
+animation:floatBalloon 10s linear infinite;
+
+}
+
+.balloon:nth-child(1){
+
+left:5%;
+
+animation-delay:0s;
+
+}
+
+.balloon:nth-child(2){
+
+left:25%;
+
+animation-delay:2s;
+
+}
+
+.balloon:nth-child(3){
+
+left:50%;
+
+animation-delay:4s;
+
+}
+
+.balloon:nth-child(4){
+
+left:75%;
+
+animation-delay:1s;
+
+}
+
+.balloon:nth-child(5){
+
+left:90%;
+
+animation-delay:3s;
+
+}
+
+@keyframes floatBalloon{
+
+0%{
+
+bottom:-100px;
+
+}
+
+100%{
+
+bottom:110%;
+
+}
+
+}
+
+/* Floating Hearts */
+
+.hearts{
+
+position:absolute;
+
+width:100%;
+
+height:100%;
+
+overflow:hidden;
+
+pointer-events:none;
+
+}
+
+.heart{
+
+position:absolute;
+
+color:#ff2d75;
+
+font-size:25px;
+
+animation:floatHeart 7s linear infinite;
+
+}
+
+@keyframes floatHeart{
+
+0%{
+
+transform:translateY(100vh);
+
+opacity:1;
+
+}
+
+100%{
+
+transform:translateY(-120vh);
+
+opacity:0;
+
+}
+}
