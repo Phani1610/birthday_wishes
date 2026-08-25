@@ -2,266 +2,68 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday My Love ❤️</title>
 
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-        rel="stylesheet">
+<title>Happy Birthday My Love ❤️</title>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 </head>
 
-<body>
+<body class="welcome-page">
 
-    <button onclick="window.location.href='welcome.html'">
+<!-- Floating Hearts -->
+<div class="hearts"></div>
 
-        ⬅ Back to Welcome
+<!-- Floating Balloons -->
+<div class="balloons">
+<div class="balloon">🎈</div>
+<div class="balloon">🎈</div>
+<div class="balloon">🎈</div>
+<div class="balloon">🎈</div>
+<div class="balloon">🎈</div>
+</div>
 
-    </button>
+<div class="welcome-container">
 
-    <!-- Floating Hearts -->
-    <div class="hearts"></div>
+<div class="heart-big">
+❤️
+</div>
 
-    <!-- ================= HERO ================= -->
+<h1>Happy Birthday My Princess 👑</h1>
 
-    <section class="hero">
+<p>
+    <div class="balloon">🎈</div>
+    <div class="balloon">🎈</div>
+    <div class="balloon">🎈</div>
 
-        <h3>❤️ Happy Birthday ❤️</h3>
+Today is all about you ❤️
 
-        <h1>My Beautiful Princess</h1>
+I have made something very special
 
-        <p id="typing"></p>
+just for the most beautiful girl
 
-        <button onclick="scrollToSection('message')">
-            Begin Our Journey ❤️
-        </button>
+in my life.
 
-    </section>
+</p>
 
-    <!-- ================= MESSAGE ================= -->
+<div class="cake-icon">
+🎂
+</div>
 
-    <section class="message" id="message">
+<button class="love-btn" onclick="openWebsite()">
 
-        <div class="card">
+💖 Open My Heart 💖
 
-            <h2>💌 A Small Message For You</h2>
+</button>
 
-            <p>
+</div>
 
-                Happy Birthday My Love ❤️
-
-                <br><br>
-
-                Every day with you is my favorite day.
-
-                <br><br>
-
-                Thank you for always making me smile.
-
-                <br><br>
-
-                I wish your life is filled with happiness,
-                success and endless love.
-
-                <br><br>
-
-                I promise to stand beside you forever.
-
-                <br><br>
-
-                ❤️ I Love You ❤️
-
-            </p>
-
-        </div>
-
-    </section>
-
-    <!-- ================= GALLERY ================= -->
-
-    <section class="gallery">
-
-        <h2>📸 Our Beautiful Memories</h2>
-
-        <div class="photos">
-
-            <img src="photo1.jpeg" alt="">
-            <img src="photo2.jpeg" alt="">
-            <img src="photo3.jpeg" alt="">
-           
-
-        </div>
-
-    </section>
-
-    <!-- ================= CAKE ================= -->
-
-    <section class="cake">
-
-        <h2>🎂 Happy Birthday My Love</h2>
-
-        <img src="images/cake.png" id="cake">
-
-        <br>
-
-        <button onclick="blowCandles()">
-
-            🕯 Blow Candles
-
-        </button>
-
-        <button onclick="cutCake()">
-
-            🍰 Cut Cake
-
-        </button>
-
-        <h3 id="cakeMessage"></h3>
-
-    </section>
-
-    <!-- ================= LOVE LETTER ================= -->
-
-    <section class="letter">
-
-        <div class="envelope">
-
-            <button onclick="openLetter()">
-
-                💌 Open My Letter
-
-            </button>
-
-        </div>
-
-        <div id="letterText">
-
-            <h2>My Dear Love ❤️</h2>
-
-            <p>
-
-                Happy Birthday to the most amazing girl
-                in my life.
-
-                Thank you for being with me.
-
-                <br><br>
-
-                I hope every dream of yours comes true.
-
-                <br><br>
-
-                No matter what happens,
-                I will always choose you.
-
-                <br><br>
-
-                ❤️ Happy Birthday ❤️
-
-            </p>
-
-        </div>
-
-    </section>
-
-    <!-- ================= FINAL ================= -->
-
-    <section class="final">
-
-        <h2>You Are...</h2>
-
-        <div class="qualities">
-
-            <div>😊 My Smile</div>
-            <div>🌸 My Happiness</div>
-            <div>💕 My Best Friend</div>
-            <div>❤️ My Safe Place</div>
-            <div>♾️ My Forever</div>
-
-        </div>
-
-        <button onclick="surprise()">
-
-            🎁 Final Surprise
-
-        </button>
-
-    </section>
-
-    <!-- Popup -->
-
-    <div class="popup" id="popup">
-
-        <div class="popup-content">
-
-            <h1>❤️ Happy Birthday ❤️</h1>
-
-            <h2>My Beautiful Princess 👑</h2>
-
-            <p>
-
-               💖 **One More Thing, My Love...** 💖
-
-I don't just want to celebrate your birthdays with you... 🎂❤️
-
-I want to celebrate **every birthday** with you. 🥰
-
-I want to be beside you through every happiness, every challenge, every dream, and every moment of life. 🤝❤️
-
-You are not just someone I love... ❤️
-
-**You are the person I want to spend my whole life with.** 💍🥹
-
-I don't know what the future holds, but I know one thing...
-
-**I want my future to have you in it.** ❤️♾️
-
-One day, I want to hold your hand and say...
-
-**"Will you be my wife?"** 💍❤️
-
-Until that day comes, remember this...
-
-**I will always choose you.** 🫶🏻
-
-**Today, tomorrow, and forever.** ❤️♾️
-
-Happy Birthday, My Love. 🎂🎉
-
-**My Future Wife. 💍👰🏻‍♀️❤️**
-
-I Love You More Than Words Can Say. 🥹❤️🌹
-
-                I Love You Forever ❤️
-
-            </p>
-
-            <button onclick="closePopup()">
-
-                Close
-
-            </button>
-
-        </div>
-
-    </div>
-
-    <!-- Background Music -->
-
-    <audio id="music" loop>
-
-        <source src="music/birthday.mp3" type="audio/mp3">
-
-    </audio>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 
